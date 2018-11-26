@@ -1,0 +1,8 @@
+---
+rhel:
+  - sgp-rhel-01
+  - sgp-rhel-02
+
+juniper:
+  - sgp-junos-01
+  - sgp-junos-02

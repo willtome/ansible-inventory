@@ -1,0 +1,6 @@
+---
+timesync_ntp_servers:
+  - hostname: 0.us.pool.ntp.org
+  - hostname: 1.us.pool.ntp.org
+  - hostname: 2.us.pool.ntp.org
+  - hostname: 3.us.pool.ntp.org

@@ -1,0 +1,8 @@
+---
+rhel:
+  - rdu-rhel-01
+  - rdu-rhel-02
+
+juniper:
+  - rdu-junos-01
+  - rdu-junos-02

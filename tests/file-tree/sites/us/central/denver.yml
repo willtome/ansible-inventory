@@ -1,0 +1,8 @@
+---
+windows:
+ - den-win-01
+ - den-win-02
+
+linux:
+ - den-nix-01
+ - den-nix-02

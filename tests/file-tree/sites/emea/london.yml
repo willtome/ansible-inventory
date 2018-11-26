@@ -1,0 +1,8 @@
+---
+windows:
+  - lon-win-01
+  - lon-win-02
+
+cisco:
+  - lon-cisco-01
+  - lon-cisco-02

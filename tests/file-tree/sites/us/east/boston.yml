@@ -1,0 +1,8 @@
+---
+linux:
+ - bos-nix-01
+ - bos-nix-02
+
+nxos:
+ - bos-nxos-01
+ - bos-nxos-02
