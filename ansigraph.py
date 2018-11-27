@@ -1,7 +1,6 @@
 
 import networkx as nx
 import json
-import matplotlib.pyplot as plt
 
 class ansigraph:
     def __init__(self):
@@ -66,6 +65,3 @@ class ansigraph:
 
       return json.dumps(self.inventory)
 
-    def draw(self):
-        nx.draw(self.graph, with_labels = True)
-        plt.show()
