@@ -1,0 +1,23 @@
+---
+- name: Get Hosts
+  include_tasks: gethosts.yml
+
+- name: Get Organizations
+  include_tasks: getorgs.yml
+
+- name: count hosts
+  loop: "{{ tower_hosts_list }}"
+  no_log: yes
+  set_fact:
+    tower_org_host_count: "{{ tower_org_host_count | combine(
+      { tower_orgs_dict_id[item.summary_fields.inventory.organization_id].name: 
+      tower_org_host_count[tower_orgs_dict_id[item.summary_fields.inventory.organization_id].name] | default(0) + 1 }
+      ) }}"
+  vars:
+    - tower_org_host_count: {}
+
+- name: create html report
+  template:
+    src: templates/report.html.j2
+    dest: "{{ playbook_dir }}/report.html"
+  ignore_errors: yes

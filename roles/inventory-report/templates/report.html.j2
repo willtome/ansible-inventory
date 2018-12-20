@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+* {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+body {
+  background:#353a40;
+}
+
+table {
+  border-collapse: separate;
+  background:#fff;
+  @include border-radius(5px);
+  margin:50px auto;
+  @include box-shadow(0px 0px 5px rgba(0,0,0,0.3));
+}
+
+thead {
+  @include border-radius(5px);
+}
+
+thead th {
+  font-family: 'Patua One', monospace;
+  font-size:16px;
+  font-weight:400;
+  color:#fff;
+  @include text-shadow(1px 1px 0px rgba(0,0,0,0.5));
+  text-align:left;
+  padding:20px;
+  border-top:1px solid #858d99;
+  background: #353a40;
+
+  &:first-child {
+   @include border-top-left-radius(5px);
+  }
+
+  &:last-child {
+    @include border-top-right-radius(5px);
+  }
+}
+
+tbody tr td {
+  font-family: 'Open Sans', sans-serif;
+  font-weight:400;
+  color:#5f6062;
+  font-size:13px;
+  padding:20px 20px 20px 20px;
+  border-bottom:1px solid #e0e0e0;
+
+}
+
+tbody tr:nth-child(2n) {
+  background:#f0f3f5;
+}
+
+tbody tr:last-child td {
+  border-bottom:none;
+  &:first-child {
+    @include border-bottom-left-radius(5px);
+  }
+  &:last-child {
+    @include border-bottom-right-radius(5px);
+  }
+}
+
+span.highlight {
+    background-color: yellow;
+}
+</style>
+</head>
+<body>
+  <table>
+    <thead>
+      <tr>
+        <th>Organization</th>
+        <th>Nodes</th>
+        <th>Quota</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for org in tower_orgs_list %}
+    <tr>
+        <td>{{ org.name }}</td>
+        {% if org.name in tower_org_host_count.keys() %}
+        <td {% if (org.name in org_node_quotas.keys()) and (tower_org_host_count[org.name] > org_node_quotas[org.name]) %}style="background:yellow;"{% endif %}> {{ tower_org_host_count[org.name] }} </td>
+        {% else %}
+        <td> 0 </td>
+        {% endif %}
+        {% if org.name in org_node_quotas.keys() %}
+        <td> {{ org_node_quotas[org.name] }} </td>
+        {% else %}
+        <td> N/A </td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

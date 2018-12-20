@@ -1,0 +1,61 @@
+---
+- name: get org count
+  uri: 
+    url: "https://{{ tower_host }}/api/v2/organizations/?page_size={{ _page_size }}&page=1"
+    method: GET
+    validate_certs: "{{ tower_validate_ssl }}"
+    user: "{{ tower_username }}"
+    password: "{{ tower_password }}"
+    force_basic_auth: yes
+  register: tower_orgs_count
+  
+- name: debug tower_orgs_count
+  when: debug
+  copy:
+    dest: tower_orgs_count.json
+    content: "{{ tower_orgs_count }}"
+    force: yes
+
+- name: get org pages
+  loop: "{{ range(1 , (tower_orgs_count.json.count / _page_size) | round(0,'ceil') | int + 1 ) | list }}"
+  uri:
+    url: "https://{{ tower_host }}/api/v2/organizations/?page_size={{ _page_size }}&page={{ item }}"
+    method: GET
+    validate_certs: "{{ tower_validate_ssl }}"
+    user: "{{ tower_username }}"
+    password: "{{ tower_password }}"
+    force_basic_auth: yes
+  register: tower_orgs_pages
+
+- name: debug tower_orgs_pages
+  when: debug
+  copy:
+    dest: tower_orgs_pages.json
+    content: "{{ tower_orgs_pages }}"
+    force: yes
+
+- name: collect orgs as list
+  loop: "{{ tower_orgs_pages.results }}"
+  no_log: true
+  set_fact:
+    tower_orgs_list: "{{ tower_orgs_list | default([]) }} + {{ item.json.results }}"
+
+- name: debug tower_orgs_list
+  when: debug
+  copy:
+    dest: tower_orgs_list.json
+    content: "{{ tower_orgs_list }}"
+    force: yes
+
+- name: collect orgs as dict by id
+  loop: "{{ tower_orgs_list }}"
+  no_log: true
+  set_fact:
+    tower_orgs_dict_id: "{{ tower_orgs_dict_id | default([]) | combine({ item.id: item }) }}"
+
+- name: debug tower_orgs_dict_id
+  when: debug
+  copy:
+    dest: tower_orgs_dict_id.json
+    content: "{{ tower_orgs_dict_id }}"
+    force: yes

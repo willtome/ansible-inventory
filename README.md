@@ -10,3 +10,22 @@ These scripts may rely on networkx for mapping and traversing the inventory. Thi
 1. Connect to the command line of your Ansible Tower server and elevate to root.
 1. Activate the python virtual environment by running `. /var/lib/awx/venv/ansible/bin/activate`
 1. Install the networkx package by running `pip install networkx`
+
+## Inventory Report
+The inventory-report role will calculate the total number of nodes owned by each organization in Tower and produce an html report. You can also provide org quotas and the report will highlight if a specific org has exceeded it's given quota. See `report-playbook.yml` for an example of how to use this role and set quotas. The report will look like the table below but in a file called `report.html` in the `playbook-dir`.
+| Organization | Nodes | Quota |
+|:------------:|:-----:|:-----:|
+| Cloud        | 10    | 20    |
+| Default      |<span style="background:yellow"> 33 </span>| 20 |
+| Network Eng  | 5     | 10    |
+| Network Ops  | 15    | 20    |
+| Windows      | 0     | N/A   |
+| Unix         | 10    | N/A   |
+
+### Using in Ansible Tower
+1. Import this repository into your Ansible Tower Server as a project
+2. Create a credentail of type `Ansible Tower`
+3. Create a job template from the project you imported to run `report-playbook.yml`
+    * Attach your credential to the job template
+    * You may over ride the quotas by defining the variable `org_node_quotas` as an extra variable
+4. Run you new job template!

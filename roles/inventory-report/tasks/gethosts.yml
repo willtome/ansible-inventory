@@ -1,0 +1,61 @@
+---
+- name: get host count
+  uri: 
+    url: "https://{{ tower_host }}/api/v2/hosts/?page_size={{ _page_size }}&page=1"
+    method: GET
+    validate_certs: "{{ tower_validate_ssl }}"
+    user: "{{ tower_username }}"
+    password: "{{ tower_password }}"
+    force_basic_auth: yes
+  register: tower_hosts_count
+  
+- name: debug tower_hosts_count
+  when: debug
+  copy:
+    dest: tower_hosts_count.json
+    content: "{{ tower_hosts_count }}"
+    force: yes
+
+- name: get host pages
+  loop: "{{ range(1 , (tower_hosts_count.json.count / _page_size) | round(0,'ceil') | int + 1 ) | list }}"
+  uri:
+    url: "https://{{ tower_host }}/api/v2/hosts/?page_size={{ _page_size }}&page={{ item }}"
+    method: GET
+    validate_certs: "{{ tower_validate_ssl }}"
+    user: "{{ tower_username }}"
+    password: "{{ tower_password }}"
+    force_basic_auth: yes
+  register: tower_hosts_pages
+
+- name: debug tower_hosts_pages
+  when: debug
+  copy:
+    dest: tower_hosts_pages.json
+    content: "{{ tower_hosts_pages }}"
+    force: yes
+
+- name: collect hosts as list
+  loop: "{{ tower_hosts_pages.results }}"
+  no_log: true
+  set_fact:
+    tower_hosts_list: "{{ tower_hosts_list | default([]) }} + {{ item.json.results }}"
+
+- name: debug tower_hosts_list
+  when: debug
+  copy:
+    dest: tower_hosts_list.json
+    content: "{{ tower_hosts_list }}"
+    force: yes
+
+- name: collect hosts as dict by id
+  loop: "{{ tower_hosts_list }}"
+  no_log: true
+  set_fact:
+    tower_hosts_dict_id: "{{ tower_hosts_dict_id | default([]) | combine({ item.id: item }) }}"
+
+- name: debug tower_hosts_dict_id
+  when: debug
+  copy:
+    dest: tower_hosts_dict_id.json
+    content: "{{ tower_hosts_dict_id }}"
+    force: yes
