@@ -13,6 +13,7 @@ These scripts may rely on networkx for mapping and traversing the inventory. Thi
 
 ## Inventory Report
 The inventory-report role will calculate the total number of nodes owned by each organization in Tower and produce an html report. You can also provide org quotas and the report will highlight if a specific org has exceeded it's given quota. See `report-playbook.yml` for an example of how to use this role and set quotas. The report will look like the table below but in a file called `report.html` in the `playbook-dir`.
+
 | Organization | Nodes | Quota |
 |:------------:|:-----:|:-----:|
 | Cloud        | 10    | 20    |
