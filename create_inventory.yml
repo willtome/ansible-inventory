@@ -1,0 +1,107 @@
+---
+- hosts: localhost
+  connection: local
+  vars:
+   - tower_host: "{{ lookup('env', 'TOWER_HOST') }}"
+   - tower_username: "{{ lookup('env', 'TOWER_USERNAME') }}"
+   - tower_password: "{{ lookup('env', 'TOWER_PASSWORD') }}"
+   - tower_validate_ssl: "{{ lookup('env', 'TOWER_VERIFY_SSL') }}"
+   - inventory_creds: ''
+   
+
+  tasks:
+   - name: get job details
+     uri:
+       url: "https://{{ tower_host }}/api/v2/jobs/{{ lookup('env', 'JOB_ID') }}/"
+       method: GET
+       validate_certs: "{{ tower_validate_ssl }}"
+       user: "{{ tower_username }}"
+       password: "{{ tower_password }}"
+       force_basic_auth: yes
+     register: job_details
+
+   - name: get current user
+     set_fact:
+      job_user: "{{ job_details.json.summary_fields.created_by.username }}"
+
+   - name: create inventory
+     tower_inventory:
+       name: "{{ job_user }}"
+       description: "Inventory of servers owned by {{ job_user }}"
+       organization: "{{ inventory_org }}"
+       tower_username: "{{ tower_username }}"
+       tower_password: "{{ tower_password }}"
+       tower_host: "{{ tower_host }}"
+       tower_verify_ssl: "{{ tower_validate_ssl }}"
+     register: inventory
+
+   - name: create inventory source
+     tower_inventory_source:
+       name: "{{ job_user }}"
+       description: "Inventory source for {{ job_user }}"
+       inventory: "{{ job_user }}"
+       credential: "{{ inventory_creds }}"
+       source: ec2
+       update_on_launch: true
+       overwrite: yes
+       source_regions: us-east-1
+       source_vars:
+         instance_filters: tag:Owner={{ job_user }}
+         hostname_variable: tag_Name
+       tower_username: "{{ tower_username }}"
+       tower_password: "{{ tower_password }}"
+       tower_host: "{{ tower_host }}"
+       tower_verify_ssl: "{{ tower_validate_ssl }}"
+     register: inventory_source
+
+   - name: update inventory
+     uri:
+       url: "https://{{ tower_host }}/api/v2/inventory_sources/{{ inventory_source.id }}/update/"
+       method: POST
+       status_code: 202
+       validate_certs: "{{ tower_validate_ssl }}"
+       user: "{{ tower_username }}"
+       password: "{{ tower_password }}"
+       force_basic_auth: yes  
+
+   - name: lookup inventory
+     uri:
+       url: "https://{{ tower_host }}/api/v2/inventories/{{ inventory.id }}/"
+       method: GET
+       validate_certs: "{{ tower_validate_ssl }}"
+       user: "{{ tower_username }}"
+       password: "{{ tower_password }}"
+       force_basic_auth: yes
+     register: inventory_config
+
+   - name: lookup role id
+     set_fact: 
+       role_id: "{{ inventory_config.json.summary_fields.object_roles.use_role.id }}"
+
+   - name: lookup user
+     uri:
+       url: "https://{{ tower_host }}/api/v2/users/?username={{ job_user }}"
+       method: GET
+       validate_certs: "{{ tower_validate_ssl }}"
+       user: "{{ tower_username }}"
+       password: "{{ tower_password }}"
+       force_basic_auth: yes
+     register: user_config
+
+   - name: lookup user id
+     set_fact:
+       user_id: "{{ user_config.json.results[0].id | int }}"
+
+   - name: add user to role
+     uri:
+       url: "https://{{ tower_host }}/api/v2/roles/{{ role_id }}/users/"
+       method: POST
+       body_format: json
+       body: '{ "id": {{ user_id }} }'
+       status_code: 204
+       validate_certs: "{{ tower_validate_ssl }}"
+       user: "{{ tower_username }}"
+       password: "{{ tower_password }}"
+       force_basic_auth: yes
+
+
