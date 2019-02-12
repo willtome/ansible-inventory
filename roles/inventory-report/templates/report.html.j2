@@ -98,6 +98,11 @@ span.highlight {
         {% endif %}
     </tr>
     {% endfor %}
+    <tr>
+      <td> <b> Unique </b> </td>
+      <td> <b> {{ unique_hosts | count }} </b> </td>
+      <td> <b> {{ tower_license.json.license_info.instance_count }} </b> </td>
+    </tr>
     </tbody>
   </table>
 </body>

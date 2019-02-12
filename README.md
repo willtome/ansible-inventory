@@ -12,7 +12,9 @@ These scripts may rely on networkx for mapping and traversing the inventory. Thi
 1. Install the networkx package by running `pip install networkx`
 
 ## Inventory Report
-The inventory-report role will calculate the total number of nodes owned by each organization in Tower and produce an html report. You can also provide org quotas and the report will highlight if a specific org has exceeded it's given quota. See `report-playbook.yml` for an example of how to use this role and set quotas. The report will look like the table below but in a file called `report.html` in the `playbook-dir`.
+The inventory-report role will calculate the total number of nodes owned by each organization in Tower and produce an html report. Additionally, it will provide a count of total unique nodes based on `inventory_hostname` and a variable. The default variable is `ansible_host`. The quota for unique is defaulted to your total license count. This may or may not match your reported license usage in Tower as Tower only looks at unique hosts based on `inventory_hostname`. (https://docs.ansible.com/ansible-tower/latest/html/administration/license-support.html#node-counting-in-licenses)
+
+ You can also provide org quotas and the report will highlight if a specific org has exceeded it's given quota. See `report-playbook.yml` for an example of how to use this role and set quotas. The report will look like the table below but in a file called `report.html` in the `playbook-dir`.
 
 | Organization | Nodes | Quota |
 |:------------:|:-----:|:-----:|
@@ -22,6 +24,7 @@ The inventory-report role will calculate the total number of nodes owned by each
 | Network Ops  | 15    | 20    |
 | Windows      | 0     | N/A   |
 | Unix         | 10    | N/A   |
+| ***Unique*** | ***73***    | ***100***   |
 
 ### Using in Ansible Tower
 1. Import this repository into your Ansible Tower Server as a project

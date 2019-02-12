@@ -59,3 +59,42 @@
     dest: tower_hosts_dict_id.json
     content: "{{ tower_hosts_dict_id }}"
     force: yes
+
+- name: collect ansible_host
+  loop: "{{ tower_hosts_list }}"
+  when: item.variables != '' and  unique_var in item.variables | from_yaml
+  no_log: true
+  set_fact:
+    ansible_host_list: "{{ ansible_host_list | default([]) }} + {{ [(item.variables | from_yaml)[unique_var]] }}"
+
+- name: debug ansible_host_list
+  when: debug and ansible_host_list is defined
+  copy:
+    dest: ansible_host_list.json
+    content: "{{ ansible_host_list }}"
+    force: yes
+
+- name: collect inventory_hostname
+  loop: "{{ tower_hosts_list }}"
+  when: item.variables == '' or unique_var not in item.variables | from_yaml
+  no_log: true
+  set_fact:
+    inventory_hostname_list: "{{ inventory_hostname_list | default([]) }} + {{ [item.name] }}"
+
+- name: debug inventory_hostname_list
+  when: debug and inventory_hostname_list is defined
+  copy:
+    dest: inventory_hostname_list.json
+    content: "{{ inventory_hostname_list }}"
+    force: yes   
+
+- name: collect unique hosts
+  set_fact:
+    unique_hosts: "{{ (ansible_host_list | default ([]) + inventory_hostname_list | default([])) | unique }}"
+
+- name: debug unique_hosts
+  when: debug
+  copy:
+    dest: unique_hosts.json
+    content: "{{ unique_hosts }}"
+    force: yes

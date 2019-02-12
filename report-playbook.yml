@@ -1,12 +1,12 @@
 ---
 - hosts: localhost
   gather_facts: no
-  vars:
-    - org_node_quotas:
-        Default: 20
-        Cloud: 20
-        Network Eng: 10
-        Network Ops: 20
+  #vars:
+  #  - org_node_quotas:
+  #      Default: 20
+  #      Cloud: 20
+  #      Network Eng: 10
+  #      Network Ops: 20
     
   roles:
     - inventory-report 
@@ -14,3 +14,6 @@
   tasks:
   - debug:
       msg: "{{ tower_org_host_count }}"
+
+  - debug: 
+      msg: "Unique Hosts: {{ unique_hosts | count }}"

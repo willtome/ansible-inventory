@@ -1,6 +1,6 @@
 ---
 org_node_quotas:
-  Default: 25
+  Default: "{{ tower_license.json.license_info.instance_count }}"
 
 
 tower_host: "{{ lookup('env', 'TOWER_HOST') }}"
@@ -9,3 +9,4 @@ tower_password: "{{ lookup('env', 'TOWER_PASSWORD') }}"
 tower_validate_ssl: "{{ lookup('env', 'TOWER_VERIFY_SSL') }}"
 _page_size: 100
 debug: no
+unique_var: ansible_host
