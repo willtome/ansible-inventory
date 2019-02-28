@@ -1,0 +1,5 @@
+{
+{% for item in tower_hosts_list %}
+"{{item.id}}": {{ item | to_json}},
+{% endfor %}
+}

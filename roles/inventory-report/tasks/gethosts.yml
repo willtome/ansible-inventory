@@ -35,10 +35,10 @@
     force: yes
 
 - name: collect hosts as list
-  loop: "{{ tower_hosts_pages.results }}"
-  no_log: true
+  #loop: "{{ tower_hosts_pages.results }}"
+  #no_log: true
   set_fact:
-    tower_hosts_list: "{{ tower_hosts_list | default([]) }} + {{ item.json.results }}"
+    tower_hosts_list: "{{ lookup('template', 'templates/tower_hosts_list.j2') }}"
 
 - name: debug tower_hosts_list
   when: debug
@@ -48,10 +48,8 @@
     force: yes
 
 - name: collect hosts as dict by id
-  loop: "{{ tower_hosts_list }}"
-  no_log: true
   set_fact:
-    tower_hosts_dict_id: "{{ tower_hosts_dict_id | default([]) | combine({ item.id: item }) }}"
+    tower_hosts_dict_id: "{{ lookup('template', 'templates/tower_hosts_dict_id.j2') }}"
 
 - name: debug tower_hosts_dict_id
   when: debug
