@@ -1,7 +1,7 @@
 ---
 - name: get license
   uri: 
-    url: "https://{{ tower_host }}/api/v2/config"
+    url: "https://{{ tower_host }}/api/v2/config/"
     method: GET
     validate_certs: "{{ tower_validate_ssl }}"
     user: "{{ tower_username }}"
