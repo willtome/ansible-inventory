@@ -1,0 +1,7 @@
+[
+{% for results in tower_hosts_pages.results %}
+{% for item in results.json.results %}
+{{ item | to_json }},
+{% endfor %}
+{% endfor %}
+]
