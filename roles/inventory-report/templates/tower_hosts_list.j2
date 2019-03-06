@@ -1,7 +1,12 @@
 [
 {% for results in tower_hosts_pages.results %}
 {% for item in results.json.results %}
-{{ item | to_json }},
+{
+"id": {{ item.id | to_json }},
+"name": {{ item.name | to_json }},
+"variables" : {{ item.variables | regex_replace('{{','') | regex_replace('}}','') | to_json }},
+"summary_fields": {{ item.summary_fields | to_json }}
+},
 {% endfor %}
 {% endfor %}
 ]

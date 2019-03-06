@@ -35,8 +35,6 @@
     force: yes
 
 - name: collect hosts as list
-  #loop: "{{ tower_hosts_pages.results }}"
-  #no_log: true
   set_fact:
     tower_hosts_list: "{{ lookup('template', 'templates/tower_hosts_list.j2') }}"
 

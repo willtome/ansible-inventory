@@ -1,5 +1,7 @@
 {
 {% for item in tower_hosts_list %}
+{% if item.id is defined %}
 "{{item.id}}": {{ item | to_json}},
+{% endif %}
 {% endfor %}
 }

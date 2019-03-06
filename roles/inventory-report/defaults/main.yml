@@ -6,7 +6,7 @@ org_node_quotas:
 tower_host: "{{ lookup('env', 'TOWER_HOST') }}"
 tower_username: "{{ lookup('env', 'TOWER_USERNAME') }}"
 tower_password: "{{ lookup('env', 'TOWER_PASSWORD') }}"
-tower_validate_ssl: "{{ lookup('env', 'TOWER_VERIFY_SSL') }}"
+tower_validate_ssl: "{{ lookup('env', 'TOWER_VERIFY_SSL') | default('false')}}"
 _page_size: 100
-debug: no
+debug: yes
 unique_var: ansible_host
