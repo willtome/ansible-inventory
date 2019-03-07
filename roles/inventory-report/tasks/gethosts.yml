@@ -58,10 +58,10 @@
 
 - name: collect ansible_host
   loop: "{{ tower_hosts_list }}"
-  when: item.variables != '' and  unique_var in item.variables | from_yaml
+  when: item.ansible_host is defined
   no_log: true
   set_fact:
-    ansible_host_list: "{{ ansible_host_list | default([]) }} + {{ [(item.variables | from_yaml)[unique_var]] }}"
+    ansible_host_list: "{{ ansible_host_list | default([]) }} + {{ [(item.ansible_host | from_yaml)] }}"
 
 - name: debug ansible_host_list
   when: debug and ansible_host_list is defined
@@ -72,7 +72,7 @@
 
 - name: collect inventory_hostname
   loop: "{{ tower_hosts_list }}"
-  when: item.variables == '' or unique_var not in item.variables | from_yaml
+  when: item.ansible_host is not defined
   no_log: true
   set_fact:
     inventory_hostname_list: "{{ inventory_hostname_list | default([]) }} + {{ [item.name] }}"

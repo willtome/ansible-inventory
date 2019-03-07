@@ -4,7 +4,9 @@
 {
 "id": {{ item.id | to_json }},
 "name": {{ item.name | to_json }},
-"variables" : {{ item.variables | regex_replace('{{','') | regex_replace('}}','') | to_json }},
+{% if (item.variables | from_yaml).ansible_host is defined %}
+"ansible_host" : {{ (item.variables | from_yaml).ansible_host | to_json}},
+{% endif %}
 "summary_fields": {{ item.summary_fields | to_json }}
 },
 {% endfor %}
