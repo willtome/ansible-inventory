@@ -29,5 +29,6 @@
 - name: create html report
   template:
     src: templates/report.html.j2
-    dest: "{{ playbook_dir }}/report.html"
+    dest: "{{ html_report_path }}"
   ignore_errors: yes
+  when: html_report

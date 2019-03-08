@@ -8,4 +8,6 @@ tower_username: "{{ lookup('env', 'TOWER_USERNAME') }}"
 tower_password: "{{ lookup('env', 'TOWER_PASSWORD') }}"
 tower_validate_ssl: "{{ lookup('env', 'TOWER_VERIFY_SSL') | default('false')}}"
 _page_size: 100
-debug: yes
+debug: no
+html_report: no
+html_report_path: "{{ playbook_dir }}/report.html"
