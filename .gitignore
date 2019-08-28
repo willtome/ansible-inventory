@@ -1,3 +1,6 @@
 *.pyc
 *.json
 *.html
+.DS_STORE
+__pycache__/
+*.db

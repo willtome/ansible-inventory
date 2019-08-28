@@ -1,0 +1,5 @@
+---
+plugin: tower
+inventory_id: '2'
+parent_group: tag_Group_web
+validate_certs: False

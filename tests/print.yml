@@ -1,0 +1,8 @@
+---
+- hosts: all
+  gather_facts: no
+  connection: local
+
+  tasks:
+  - debug:
+      msg: "{{ group_names }}" 
