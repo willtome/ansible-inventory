@@ -21,7 +21,7 @@ An example of creating and loading data can can be found in `tests/sqlite_setup.
 
 Test command ran from inside the tests dir `ansible-playbook -i sqlite.yml print.yml`
 
-To preview the inventory from the root of the directory `ansible-inventory -i sqlite.yml --list`
+To preview the inventory from the root of the directory `ansible-inventory -i sqlite.yml --list --playbookdir=.`
 
 ## Tower
 The Tower inventory plugin allows you dynamically query an existing Tower inventory. This version adds the ability to specify a `parent_group` which will restrict the plugin to only hosts that are children of that group. This search is done recursively. Groups structure of each host is preserved. An example can be found in `tests/tower.yml`.
