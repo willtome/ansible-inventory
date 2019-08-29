@@ -19,23 +19,25 @@ An example of creating and loading data can can be found in `tests/sqlite_setup.
 - `db_path`: the path to the SQLite DB file
 - `db_table`: the table within the DB to lookup hosts
 
-Test command `ansible-playbook -i sqlite.yml print.yml`
+Test command ran from inside the tests dir `ansible-playbook -i sqlite.yml print.yml`
+
+To preview the inventory from the root of the directory `ansible-inventory -i sqlite.yml --list --playbookdir=.`
 
 ## Tower
 The Tower inventory plugin allows you dynamically query an existing Tower inventory. This version adds the ability to specify a `parent_group` which will restrict the plugin to only hosts that are children of that group. This search is done recursively. Groups structure of each host is preserved. An example can be found in `tests/tower.yml`.
 
-This plugin required `networkx` be installed. You may need to setup an Ansible [environment](https://docs.ansible.com/ansible/latest/dev_guide/developing_modules_general.html#common-environment-setup) to test. 
+This plugin required `networkx` be installed. You may need to setup an Ansible [environment](https://docs.ansible.com/ansible/latest/dev_guide/developing_modules_general.html#common-environment-setup) to test.
 
 Test command `ansible-playbook -i tower.yml print.yml`
 
 ## Stacked Plugins
-Inventory plugins may be "stacked" as described [here](https://docs.ansible.com/ansible/latest/plugins/inventory.html#using-inventory-plugins). These will execute in order they are in the directory specified. It is a good idea to explitly order using number prefixes such as `00-`, `01-`, etc. See example in `tests/stacked_plugins`. 
+Inventory plugins may be "stacked" as described [here](https://docs.ansible.com/ansible/latest/plugins/inventory.html#using-inventory-plugins). These will execute in order they are in the directory specified. It is a good idea to explitly order using number prefixes such as `00-`, `01-`, etc. See example in `tests/stacked_plugins`.
 
 Test command `ansible-playbook -i stacked_plugins/ print.yml`
 
 # Scripts
 ## File Tree
-The file tree inventory script is intended to use a filesystem hierarchy to describe Ansible groups, children, and nodes. Each child folder will be a a child group. YAML files in found in the folders will be parsed. They are expected to contain lists of nodes. Each "key" will be a group and the nodes listed under each key will be a members of the that group and of the folder. To define variables for the groups or hosts use the `group_vars` or `host_vars` directory adjacent to the inventory script itself. For an example, see the `tests` directory. 
+The file tree inventory script is intended to use a filesystem hierarchy to describe Ansible groups, children, and nodes. Each child folder will be a a child group. YAML files in found in the folders will be parsed. They are expected to contain lists of nodes. Each "key" will be a group and the nodes listed under each key will be a members of the that group and of the folder. To define variables for the groups or hosts use the `group_vars` or `host_vars` directory adjacent to the inventory script itself. For an example, see the `tests` directory.
 
 ### Using in Ansible Tower
 These scripts may rely on networkx for mapping and traversing the inventory. This library is not installed on Tower by default. To install, follow the below instructions.

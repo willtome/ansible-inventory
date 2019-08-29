@@ -13,7 +13,9 @@ DOCUMENTATION = '''
             required: True
             choices: ['sqlite']
         db_path:
-            description: The path to the sqlite db file
+            description:
+                - The path to the sqlite db file.
+                - This can be either an absolute path, or relative to inventory file.
             required: True
         db_table:
             description: The table containing hosts
@@ -35,6 +37,9 @@ from ansible.plugins.inventory import BaseFileInventoryPlugin
 
 import sqlite3
 
+import os
+
+
 class InventoryModule(BaseFileInventoryPlugin):
 
     NAME = 'sqlite'
@@ -47,7 +52,11 @@ class InventoryModule(BaseFileInventoryPlugin):
         super(InventoryModule, self).parse(inventory, loader, path)
         self._read_config_data(path)
 
-        db_file = self.get_option('db_path')
+        db_file_in = self.get_option('db_path')
+        if os.path.isabs(db_file_in):
+            db_file = db_file_in
+        else:
+            db_file = os.path.join(os.path.dirname(path), db_file_in)
         db_table = self.get_option('db_table')
         conn = sqlite3.connect(db_file)
         c = conn.cursor()
