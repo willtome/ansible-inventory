@@ -30,10 +30,53 @@ This plugin required `networkx` be installed. You may need to setup an Ansible [
 
 Test command `ansible-playbook -i tower.yml print.yml`
 
+## Tower Cluster
+
+This will return an inventory of the Ansible Tower cluster itself (not user inventory). This is intended as a clean example of interaction with an API. No authentication is required.
+
+```
+ansible-inventory -i tests/tower_cluster.yml --list --export --playbook-dir=.
+```
+
+(this assumes that you have a development AWX cluster running)
+
+You can also try the `tests/bad.tower_cluster.yml` to see handling of API connection errors.
+
+## Basic
+
+This is a teaching example for writing inventory plugins. It covers:
+
+ - All the standard stuff
+ - Group name transformation issue
+ - Specifying secret data via environment variable
+
+Test this all out:
+
+```
+ANSIBLE_TRANSFORM_INVALID_GROUP_CHARS=always BASIC_PASSWORD=foobar ansible-inventory -i tests/basic.yaml --playbook-dir=. --list --export
+```
+
+Try changing the password (as defined by the environment variable) and see the change in output.
+
+Try removing `ANSIBLE_TRANSFORM_INVALID_GROUP_CHARS` and see how that changes the output.
+Note that the default behavior is changing within the current development 2.10 release.
+
 ## Stacked Plugins
-Inventory plugins may be "stacked" as described [here](https://docs.ansible.com/ansible/latest/plugins/inventory.html#using-inventory-plugins). These will execute in order they are in the directory specified. It is a good idea to explitly order using number prefixes such as `00-`, `01-`, etc. See example in `tests/stacked_plugins`.
+Inventory plugins may be "stacked" as described [here](https://docs.ansible.com/ansible/latest/plugins/inventory.html#using-inventory-plugins). These will execute in order they are in the directory specified. It is a good idea to explicitly order using number prefixes such as `00-`, `01-`, etc. See example in `tests/stacked_plugins`.
 
 Test command `ansible-playbook -i stacked_plugins/ print.yml`
+
+# Viewing Documentation
+
+The command `ansible-doc` will not use paths relative to playbooks.
+You can still use it to view metadata on your custom inventory plugins with additional config settings.
+
+```
+ANSIBLE_INVENTORY_PLUGINS=inventory_plugins ansible-doc -t inventory -l
+# oh look, it found my plugin
+ANSIBLE_INVENTORY_PLUGINS=inventory_plugins ansible-doc -t inventory basic
+# wow, that showed my documentation, so cool
+```
 
 # Scripts
 ## File Tree
