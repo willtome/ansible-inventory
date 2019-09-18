@@ -1,0 +1,7 @@
+---
+plugin: foreman
+keyed_groups:
+  - prefix: OS
+    key: foreman_operatingsystem_name
+groups:
+  WARNING: foreman_global_status_label == 'Warning'
