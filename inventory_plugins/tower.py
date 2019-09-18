@@ -74,7 +74,7 @@ DOCUMENTATION = '''
                 - name: TOWER_PARENT_GROUP
             required: False
     requirements:
-        - networkx >= 2.3
+        - networkx >= 2.0
 '''
 
 EXAMPLES = '''
