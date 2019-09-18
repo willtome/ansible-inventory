@@ -76,6 +76,8 @@ from ansible.errors import AnsibleError
 from ansible.module_utils._text import to_bytes, to_native, to_text
 from ansible.module_utils.common._collections_compat import MutableMapping
 from ansible.plugins.inventory import BaseInventoryPlugin, Cacheable, to_safe_group_name, Constructable
+from ansible.utils.vars import combine_vars
+from ansible.inventory.helpers import get_group_vars
 
 # 3rd party imports
 try:
@@ -231,9 +233,11 @@ class InventoryModule(BaseInventoryPlugin, Cacheable, Constructable):
                 if self.get_option('want_facts'):
                     self.inventory.set_variable(host['name'], 'ansible_facts', self._get_facts(host))
 
-                self._add_host_to_composed_groups(self.get_option('groups'), dict(), host['name'])
-                self._add_host_to_keyed_groups(self.get_option('keyed_groups'), dict(), host['name'])
-                self._set_composite_vars(self.get_option('compose'), hostvars, host['name'])
+                hostvars = combine_vars(get_group_vars(self.inventory.hosts[host['name']].get_groups()), self.inventory.hosts[host['name']].get_vars())
+                self._set_composite_vars(self.get_option('compose'), hostvars, host['name'], strict=True)
+                self._add_host_to_composed_groups(self.get_option('groups'), dict(), host['name'], strict=True)
+                self._add_host_to_keyed_groups(self.get_option('keyed_groups'), dict(), host['name'], strict=True)
+
 
     def parse(self, inventory, loader, path, cache=True):
 

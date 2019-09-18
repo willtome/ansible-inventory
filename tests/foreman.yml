@@ -5,3 +5,5 @@ keyed_groups:
     key: foreman_operatingsystem_name
 groups:
   WARNING: foreman_global_status_label == 'Warning'
+compose:
+  shortname: inventory_hostname.split('.')[0]
