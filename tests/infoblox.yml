@@ -1,0 +1,4 @@
+---
+plugin: infoblox
+host: nios01.example.com
+username: admin
