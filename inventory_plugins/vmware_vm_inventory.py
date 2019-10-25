@@ -31,12 +31,12 @@ DOCUMENTATION = '''
             description: Name of vCenter or ESXi server.
             required: True
             env:
-              - name: VMWARE_SERVER
+              - name: VMWARE_HOST
         username:
             description: Name of vSphere admin user.
             required: True
             env:
-              - name: VMWARE_USERNAME
+              - name: VMWARE_USER
         password:
             description: Password of vSphere admin user.
             required: True
@@ -52,6 +52,8 @@ DOCUMENTATION = '''
             - Allows connection when SSL certificates are not valid. Set to C(false) when certificates are not trusted.
             default: True
             type: boolean
+            env:
+              - name: VMWARE_VALIDATE_CERTS
         with_tags:
             description:
             - Include tags and associated virtual machines.
