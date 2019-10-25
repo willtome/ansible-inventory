@@ -7,6 +7,8 @@ DOCUMENTATION = r'''
     version_added: "2.10"
     description:
         - ServiceNow Inventory plugin
+    extends_documentation_fragment:
+        - constructed
     options:
         instance:
             description: The ServiceNow instance URI. The URI should be the fully-qualified domain name, e.g. 'your-instance.servicenow.com'.
@@ -57,12 +59,12 @@ plugin: servicenow
 instance: demo.service-now.com
 '''
 
-from ansible.plugins.inventory import BaseInventoryPlugin
+from ansible.plugins.inventory import BaseInventoryPlugin, Constructable
 import requests
 import sys
 
 
-class InventoryModule(BaseInventoryPlugin):
+class InventoryModule(BaseInventoryPlugin, Constructable):
 
     NAME = 'now'
 
@@ -119,6 +121,7 @@ class InventoryModule(BaseInventoryPlugin):
         content = self.invoke('GET', path, None)
 
         target = None
+        strict=self.get_option('strict')
 
         for record in content['result']:
 
@@ -140,3 +143,7 @@ class InventoryModule(BaseInventoryPlugin):
                 else:
                     group_name = self.inventory.add_group(record[k])
                     self.inventory.add_child(group_name, host_name)
+
+            self._set_composite_vars(self.get_option('compose'), self.inventory.get_host(host_name).get_vars(), host_name, strict)
+            self._add_host_to_composed_groups(self.get_option('groups'), dict(), host_name, strict)
+            self._add_host_to_keyed_groups(self.get_option('keyed_groups'), dict(), host_name, strict)
