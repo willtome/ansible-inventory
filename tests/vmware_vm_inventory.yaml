@@ -1,0 +1,3 @@
+---
+plugin: vmware_vm_inventory
+validate_certs: False
