@@ -1,0 +1,8 @@
+---
+plugin: constructed
+strict: yes
+compose:
+  myvar: " inventory_hostname.split('_')[0] "
+keyed_groups:
+  - prefix: keyed
+    key: myvar
