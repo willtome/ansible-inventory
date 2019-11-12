@@ -86,50 +86,49 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         }
         proxy = self.get_option('proxy')
 
-
         # build url
-        url = "https://%s/%s" % (self.get_option('instance'), path)
-        results = []
+        self.url = "https://%s/%s" % (self.get_option('instance'), path)
+        url = self.url
+        #results = []
+        try:
+            results = self._cache[self.cache_key][self.url]
+        except KeyError:
+            self.update_cache = True
 
-        session = requests.Session()
+        if not self.use_cache or self.url not in self._cache.get(self.cache_key, {}):
+            if self.cache_key not in self._cache:
+                self._cache[self.cache_key] = {self.url: ''}
 
-        while url:
-          # perform REST operation, accumulating page results
-          response = session.get(
-              url, auth=auth, headers=headers, proxies={
-                  'http': proxy, 'https': proxy})
-          if response.status_code != 200:
-              raise AnsibleError("http error (%s): %s" % (response.status_code, response.text))
-          results += response.json()['result']
-          next_link = response.links.get('next', {})
-          url =  next_link.get('url', None)
+            results = []
+            session = requests.Session()
+            
+            while url:
+                # perform REST operation, accumulating page results
+                response = session.get(
+                    url, auth=auth, headers=headers, proxies={
+                    'http': proxy, 'https': proxy})
+                if response.status_code != 200:
+                    raise AnsibleError("http error (%s): %s" % (response.status_code, response.text))
+                results += response.json()['result']
+                next_link = response.links.get('next', {})
+                url =  next_link.get('url', None)
+        
+            self._cache[self.cache_key] = { self.url: results }
+            
+        results = { 'result': results }
+        return results 
 
-        result = { 'result': results }
-        return result
 
     def parse(self, inventory, loader, path, cache=True):  # Plugin interface (2)
         super(InventoryModule, self).parse(inventory, loader, path)
         self._read_config_data(path)
-        cache_key = self.get_cache_key(path)
-        user_cache_setting = self.get_option('cache')
-  
-        attempt_to_read_cache = user_cache_setting and cache
-        cache_needs_update = user_cache_setting and not cache
-        if attempt_to_read_cache:
-            try:
-                results = self._cache[cache_key]
-            except KeyError:
-            # This occurs if the cache_key is not in the cache or if the cache_key expired, so the cache needs to be updated
-                cache_needs_update = True
-   
-            if cache_needs_updates:
-                results = self.get_inventory()
-   
-                # set the cache
-                self._cache[cache_key] = results
-  
-            self.populate(results)
+        self.load_cache_plugin()
 
+        self.cache_key = self.get_cache_key(path)
+
+        self.use_cache = self.get_option('cache') and cache
+        self.update_cache = self.get_option('cache') and not cache
+        
         selection = self.get_option('selection_order')
         groups = self.get_option('sn_groups')
         fields = self.get_option('fields')
@@ -146,10 +145,8 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         path = '/api/now/table/' + table + options + \
             "&sysparm_fields=" + ','.join(columns) + \
             "&sysparm_query=" + filter_results
-
+            
         content = self.invoke('GET', path, None)
-        
-        #strict = self.get_option('strict')
 
         for record in content['result']:
 
