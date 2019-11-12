@@ -68,7 +68,10 @@ password=password
 
 from ansible.plugins.inventory import BaseInventoryPlugin, Constructable, to_safe_group_name, Cacheable
 from ansible.errors import AnsibleError, AnsibleParserError
-import requests
+try:
+    import requests
+except ImportError:
+    raise AnsibleError('This script requires python-requests')
 import sys
 
 class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
