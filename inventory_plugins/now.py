@@ -7,6 +7,9 @@ DOCUMENTATION = r'''
     version_added: "2.10"
     description:
         - ServiceNow Inventory plugin
+    extends_documentation_fragment:
+        - constructed
+        - inventory_cache
     options:
         instance:
             description: The ServiceNow instance URI. The URI should be the fully-qualified domain name, e.g. 'your-instance.servicenow.com'.
@@ -59,12 +62,12 @@ username=admin
 password=password
 '''
 
-from ansible.plugins.inventory import BaseInventoryPlugin
+from ansible.plugins.inventory import BaseInventoryPlugin, Constructable, Cacheable
 import requests
 import sys
 import re
 
-class InventoryModule(BaseInventoryPlugin):
+class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
     NAME = 'now'
 
@@ -100,6 +103,25 @@ class InventoryModule(BaseInventoryPlugin):
     def parse(self, inventory, loader, path, cache=True):  # Plugin interface (2)
         super(InventoryModule, self).parse(inventory, loader, path)
         self._read_config_data(path)
+        cache_key = self.get_cache_key(path)
+        user_cache_setting = self.get_option('cache')
+  
+        attempt_to_read_cache = user_cache_setting and cache
+        cache_needs_update = user_cache_setting and not cache
+        if attempt_to_read_cache:
+            try:
+                results = self._cache[cache_key]
+            except KeyError:
+            # This occurs if the cache_key is not in the cache or if the cache_key expired, so the cache needs to be updated
+                cache_needs_update = True
+   
+            if cache_needs_updates:
+                results = self.get_inventory()
+   
+                # set the cache
+                self._cache[cache_key] = results
+  
+            self.populate(results)
 
         selection = self.get_option('selection_order').split(',')
         groups = self.get_option('groups')
