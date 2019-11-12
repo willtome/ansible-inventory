@@ -11,6 +11,11 @@ DOCUMENTATION = r'''
         - constructed
         - inventory_cache
     options:
+        plugin:
+            description: The ServiceNow Inventory Plugin
+            type: string
+            required: true
+            default: now
         instance:
             description: The ServiceNow instance URI. The URI should be the fully-qualified domain name, e.g. 'your-instance.servicenow.com'.
             type: string
