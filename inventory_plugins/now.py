@@ -119,6 +119,8 @@ class InventoryModule(BaseInventoryPlugin):
             "&sysparm_query=" + filter_results
 
         content = self.invoke('GET', path, None)
+        
+        #strict = self.get_option('strict')
 
         for record in content['result']:
 
