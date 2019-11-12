@@ -7,8 +7,6 @@ DOCUMENTATION = r'''
     version_added: "2.10"
     description:
         - ServiceNow Inventory plugin
-    extends_documentation_fragment:
-        - constructed
     options:
         instance:
             description: The ServiceNow instance URI. The URI should be the fully-qualified domain name, e.g. 'your-instance.servicenow.com'.
@@ -43,7 +41,7 @@ DOCUMENTATION = r'''
         selection_order:
             description: Comma seperated string providing ability to define selection preference order.
             type: string
-            default: 'host_name,fqdn,ip_address,name'
+            default: 'host_name,fqdn,ip_address'
         filter_results:
             description: Filter results with sysparm_query encoded query string syntax. Complete list of operators available for filters and queries.
             type: string
@@ -55,16 +53,18 @@ DOCUMENTATION = r'''
 '''
 
 EXAMPLES = r'''
-plugin: servicenow
+plugin: now
 instance: demo.service-now.com
+username=admin
+password=password
 '''
 
-from ansible.plugins.inventory import BaseInventoryPlugin, Constructable
+from ansible.plugins.inventory import BaseInventoryPlugin
 import requests
 import sys
+import re
 
-
-class InventoryModule(BaseInventoryPlugin, Constructable):
+class InventoryModule(BaseInventoryPlugin):
 
     NAME = 'now'
 
@@ -120,15 +120,16 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
 
         content = self.invoke('GET', path, None)
 
-        target = None
-        strict=self.get_option('strict')
-
         for record in content['result']:
 
+            target = None
+            
             for k in selection:
                 if k in record:
                     if record[k] != '':
                         target = record[k]
+            if target is None:
+                continue
 
             host_name = self.inventory.add_host(target)
 
@@ -138,12 +139,16 @@ class InventoryModule(BaseInventoryPlugin, Constructable):
             for k in groups:
                 if k == "sys_tags" and record[k] != None:
                     for y in [x.strip() for x in record[k].split(',')]:
-                        group_name = self.inventory.add_group(y)
+                        group = y.lower()
+                        group = re.sub(r'[^a-zA-Z0-9_]', '_', group)
+                        group_name = self.inventory.add_group(group)
                         self.inventory.add_child(host_name, group_name)
                 else:
-                    group_name = self.inventory.add_group(record[k])
+                    group = record[k].lower()
+                    group = re.sub(r'[^a-zA-Z0-9_]', '_', group)
+                    group_name = self.inventory.add_group(group)
                     self.inventory.add_child(group_name, host_name)
-
-            self._set_composite_vars(self.get_option('compose'), self.inventory.get_host(host_name).get_vars(), host_name, strict)
-            self._add_host_to_composed_groups(self.get_option('groups'), dict(), host_name, strict)
-            self._add_host_to_keyed_groups(self.get_option('keyed_groups'), dict(), host_name, strict)
+    
+            #self._set_composite_vars(self.get_option('compose'), self.inventory.get_host(host_name).get_vars(), host_name, strict)
+            #self._add_host_to_composed_groups(self.get_option('groups'), dict(), host_name, strict)
+            #self._add_host_to_keyed_groups(self.get_option('keyed_groups'), dict(), host_name, strict)
