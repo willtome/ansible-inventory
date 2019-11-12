@@ -12,10 +12,9 @@ DOCUMENTATION = r'''
         - inventory_cache
     options:
         plugin:
-            description: The ServiceNow Inventory Plugin
-            type: string
-            required: true
-            default: now
+            description: The name of the ServiceNow Inventory Plugin, this should always be 'now'.
+            required: True
+            choices: ['now']
         instance:
             description: The ServiceNow instance URI. The URI should be the fully-qualified domain name, e.g. 'your-instance.servicenow.com'.
             type: string
@@ -67,11 +66,10 @@ username=admin
 password=password
 '''
 
-from ansible.plugins.inventory import BaseInventoryPlugin, Constructable, Cacheable
+from ansible.plugins.inventory import BaseInventoryPlugin, Constructable, to_safe_group_name, Cacheable
 from ansible.errors import AnsibleError, AnsibleParserError
 import requests
 import sys
-import re
 
 class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
 
@@ -169,14 +167,14 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
             for k in groups:
                 if k == "sys_tags" and record[k] != None:
                     for y in [x.strip() for x in record[k].split(',')]:
-                        group = y.lower()
-                        group = re.sub(r'[^a-zA-Z0-9_]', '_', group)
-                        group_name = self.inventory.add_group(group)
+                        group_name = y.lower()
+                        group_name = to_safe_group_name(group_name.replace(" ", "_"))
+                        group_name = self.inventory.add_group(group_name)
                         self.inventory.add_child(host_name, group_name)
                 else:
-                    group = record[k].lower()
-                    group = re.sub(r'[^a-zA-Z0-9_]', '_', group)
-                    group_name = self.inventory.add_group(group)
+                    group_name = record[k].lower()
+                    group_name = to_safe_group_name(group_name.replace(" ", "_"))
+                    group_name = self.inventory.add_group(group_name)
                     self.inventory.add_child(group_name, host_name)
     
             #self._set_composite_vars(self.get_option('compose'), self.inventory.get_host(host_name).get_vars(), host_name, strict)
