@@ -37,13 +37,13 @@ DOCUMENTATION = r'''
             description: Comma seperated string providing additional table columns to add as host vars to each inventory host.
             type: list
             default: []
-        groups:
+        sn_groups:
             description: Comma seperated string providing additional table columns to use as groups. Groups can overlap with fields
             type: list
             default: []
         selection_order:
             description: Comma seperated string providing ability to define selection preference order.
-            type: string
+            type: list
             default: 'host_name,fqdn,ip_address'
         filter_results:
             description: Filter results with sysparm_query encoded query string syntax. Complete list of operators available for filters and queries.
@@ -63,6 +63,7 @@ password=password
 '''
 
 from ansible.plugins.inventory import BaseInventoryPlugin, Constructable, Cacheable
+from ansible.errors import AnsibleError, AnsibleParserError
 import requests
 import sys
 import re
@@ -92,7 +93,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
               url, auth=auth, headers=headers, proxies={
                   'http': proxy, 'https': proxy})
           if response.status_code != 200:
-              print >> sys.stderr, "http error (%s): %s" % (response.status_code, response.text)
+              raise AnsibleError("http error (%s): %s" % (response.status_code, response.text))
           results += response.json()['result']
           next_link = response.links.get('next', {})
           url =  next_link.get('url', None)
@@ -123,8 +124,8 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
   
             self.populate(results)
 
-        selection = self.get_option('selection_order').split(',')
-        groups = self.get_option('groups')
+        selection = self.get_option('selection_order')
+        groups = self.get_option('sn_groups')
         fields = self.get_option('fields')
         table = self.get_option('table')
         filter_results = self.get_option('filter_results')
