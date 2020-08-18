@@ -1,0 +1,8 @@
+[GroupA]
+clt-prd-web1 ansible_host=192.168.1.5 my_variable=helloworld
+clt-dev-web2 ansible_host=clt-dev-web2.my.domain.com
+
+[GroupB]
+den-prd-web3
+bna-uat-db
+den-dev-web4
