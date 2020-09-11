@@ -20,6 +20,10 @@ DOCUMENTATION = r'''
             default: foo
             env:
                 - name: BASIC_PASSWORD
+        root_group_name:
+           description: name of root group
+           type: string
+           default: root-group
     requirements:
         - python >= 3.4
 '''
@@ -55,7 +59,7 @@ class InventoryModule(BaseInventoryPlugin):
         super(InventoryModule, self).parse(inventory, loader, path)
         self._read_config_data(path)
 
-        root_group_name = self.inventory.add_group('root-group')  # Inventory interface (3)
+        root_group_name = self.inventory.add_group(self.get_option('root_group_name'))  # Inventory interface (3)
 
         for i in range(self.get_option('count')):
             group_name = self.inventory.add_group('group_%s' % i)  # Inventory interface (3)
