@@ -1,0 +1,4 @@
+---
+plugin: servicenow.servicenow.now
+table: cmdb_ci_database
+enhanced: yes
