@@ -1,6 +1,8 @@
 ---
 plugin: servicenow.servicenow.now
 enhanced: yes
+groups:
+  server: true
 fields:
   - sys_class_name
   - name

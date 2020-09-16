@@ -2,6 +2,10 @@
 plugin: servicenow.servicenow.now
 table: cmdb_ci_appl
 enhanced: yes
+compose:
+  type: 'application'
+groups:
+  application: true
 fields:
   - name
   - sys_class_name

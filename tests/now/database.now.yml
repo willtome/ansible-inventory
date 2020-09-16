@@ -2,6 +2,8 @@
 plugin: servicenow.servicenow.now
 table: cmdb_ci_database
 enhanced: yes
+groups:
+  database: true
 fields:
   - name
   - type
