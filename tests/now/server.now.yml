@@ -6,7 +6,7 @@ groups:
 fields:
   - sys_class_name
   - name
-  - used_fof
+  - used_for
   - managed_by
   - os
 keyed_groups:
