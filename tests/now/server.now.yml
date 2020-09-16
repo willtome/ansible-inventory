@@ -1,3 +1,18 @@
 ---
 plugin: servicenow.servicenow.now
 enhanced: yes
+fields:
+  - sys_class_name
+  - name
+  - used_fof
+  - managed_by
+  - os
+keyed_groups:
+  - key: sn_sys_class_name | lower
+    separator: ''
+  - key: sn_used_for | lower
+    separator: ''
+  - key: sn_managed_by | lower
+    prefix: owner
+  - key: sn_os | lower
+    prefix: os

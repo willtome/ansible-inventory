@@ -2,3 +2,16 @@
 plugin: servicenow.servicenow.now
 table: cmdb_ci_service
 enhanced: yes
+enhanced_groups: no
+fields:
+  - name
+  - owned_by
+  - change_control
+  - support_group
+  - used_for
+  - operational_status
+keyed_groups:
+  - key: sn_operational_status
+    separator: ''
+  - key: sn_used_for
+    separator: ''

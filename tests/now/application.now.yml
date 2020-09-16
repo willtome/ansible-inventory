@@ -2,3 +2,13 @@
 plugin: servicenow.servicenow.now
 table: cmdb_ci_appl
 enhanced: yes
+fields:
+  - name
+  - sys_class_name
+  - used_for
+keyed_groups:
+  - key: sn_sys_class_name | lower
+    separator: ''
+  - key: sn_used_for | lower
+    separator: ''
+

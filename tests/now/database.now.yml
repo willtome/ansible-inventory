@@ -2,3 +2,9 @@
 plugin: servicenow.servicenow.now
 table: cmdb_ci_database
 enhanced: yes
+fields:
+  - name
+  - type
+keyed_groups:
+  - key: sn_type | lower
+    prefix: db
