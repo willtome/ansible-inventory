@@ -11,3 +11,5 @@ child1
 
 [site_child1:vars]
 site_child_var1 = this is site_child_var1
+
+[site_child2]

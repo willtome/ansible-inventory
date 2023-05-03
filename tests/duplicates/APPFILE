@@ -11,3 +11,5 @@ child1
 
 [app_child1:vars]
 app_child_var1 = this is app_child_var1
+
+[app_child2]
