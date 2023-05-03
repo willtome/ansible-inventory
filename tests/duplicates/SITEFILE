@@ -13,3 +13,4 @@ child1
 site_child_var1 = this is site_child_var1
 
 [site_child2]
+child[2:1000]
