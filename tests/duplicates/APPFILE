@@ -1,0 +1,13 @@
+[app:children]
+app_child1
+app_child2
+
+[app]
+[app:vars]
+app_var1 = this is app_var1
+
+[app_child1]
+child1
+
+[app_child1:vars]
+app_child_var1 = this is app_child_var1
