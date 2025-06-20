@@ -1,0 +1,8 @@
+---
+plugin: ansible.builtin.constructed
+compose:
+  state: "inventory_hostname.split('-')[0]"
+  level: "inventory_hostname.split('-')[1]"
+keyed_groups:
+  - key: state
+    prefix: state
