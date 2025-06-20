@@ -1,0 +1,11 @@
+---
+- hosts: localhost
+  gather_facts: no
+
+  tasks:
+  - ansible.controller.host:
+      name: "{{ new_host }}"
+      inventory: 3
+      state: present
+      variables:
+        ansible_host: "{{ new_ip }}"
