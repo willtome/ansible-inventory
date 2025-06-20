@@ -1,0 +1,3 @@
+---
+plugin: ansible.controller.controller
+inventory_id: 3
