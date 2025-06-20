@@ -6,6 +6,6 @@
   - ansible.controller.host:
       name: "{{ new_host }}"
       inventory: 3
-      state: present
+      state: {{ new_state }}
       variables:
         ansible_host: "{{ new_ip }}"
